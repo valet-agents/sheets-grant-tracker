@@ -1,0 +1,69 @@
+name: sheets-grant-tracker
+display_name: Sheets Grant Tracker
+description: >-
+  Watches a Google Sheets grant tracker for the team. Every weekday
+  at 9am Pacific, posts upcoming grant deadlines bucketed into 30,
+  60, and 90 days — and flags drafts that have gone stale — to
+  whichever Slack channel the bot has been invited to. Answers
+  grant questions in Slack on @mention.
+category: nonprofit
+
+story:
+  hero: "Never miss a grant deadline again."
+  subheadline: >-
+    Reads your grant tracker daily and posts what's due in 30, 60,
+    and 90 days — and which drafts need attention now.
+  steps:
+    - role: trigger
+      title: "9am hits."
+      body: >-
+        The cron fires Monday through Friday. No spreadsheet to open,
+        no calendar reminder to dismiss.
+    - role: action
+      title: "It reads your grant tracker."
+      body: >-
+        Pulls every row, parses due dates, and finds drafts that
+        haven't moved in 14+ days inside a 60-day window.
+      catalog: google-sheets
+    - role: outcome
+      title: "Deadlines grouped 30/60/90, posted in Slack."
+      body: >-
+        URGENT first, owners @-tagged, stale drafts called out —
+        under 2,500 characters. @mention it back to dig into anything.
+      catalog: slack
+
+connectors:
+  - catalog: google-sheets
+    description: >-
+      Google Sheets via OAuth. The agent reads the grant tracker
+      spreadsheet (located by `GRANT_SHEET_ID` or by matching titles
+      `Grants` / `Grant Tracker` / `Funding`), parses rows for
+      funder, amount, due date, status, and owner, and writes back
+      only when a Slack user explicitly confirms an update.
+    ui:
+      headline: "Connect Google Sheets with one click."
+      blurb: >-
+        OAuth into Google — no credentials to paste. The agent uses
+        your access to read the grant tracker and answer questions
+        about deadlines and drafts.
+      done_note: "Google Sheets connected"
+
+channels:
+  - catalog: slack
+    description: >-
+      The agent gets its own Slack bot. Invite it to whichever
+      channels you want the daily grant digest in, and to any other
+      channel where teammates should be able to @mention it for
+      ad-hoc grant questions.
+    ui:
+      headline: "Give Grant Tracker a Slack bot."
+      blurb: >-
+        The agent posts the daily digest to every channel you invite
+        it to. Invite it to one focused channel, or several —
+        whatever matches how your team works.
+      done_note: "Bot ready — invite it to a channel"
+
+  - type: cron
+    cron: "0 9 * * 1-5"
+    timezone: America/Los_Angeles
+    description: "Fires the daily grant deadline digest at 9am Pacific, Monday through Friday."
