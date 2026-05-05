@@ -8,6 +8,9 @@ description: >-
   grant questions in Slack on @mention.
 category: nonprofit
 
+example:
+  prompt: "What grants are due in the next 30 days?"
+
 story:
   hero: "Never miss a grant deadline again."
   subheadline: >-
